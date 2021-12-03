@@ -39,8 +39,7 @@ parser.add_argument("--max-epochs", type=int)
 args = parser.parse_args()
 
 os.makedirs("logs", exist_ok=True)
-os.makedirs("results", exist_ok=True)
-os.makedirs("weights", exist_ok=True)
+os.makedirs("results/checkpoints", exist_ok=True)
 
 DATASET_DIR = "data/echocardiography"
 DEVICE = "cuda"
@@ -54,6 +53,10 @@ model = smp.DeepLabV3Plus(
 
 if args.encoder == "se_resnext50_32x4d":
     model.encoder.layer0.conv1 = nn.Conv2d(
+        1, 64, kernel_size=7, stride=2, padding=3, bias=False
+    )
+elif args.encoder == "resnet18":
+    model.encoder.conv1 = nn.Conv2d(
         1, 64, kernel_size=7, stride=2, padding=3, bias=False
     )
 
