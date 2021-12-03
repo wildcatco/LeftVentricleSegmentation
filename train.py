@@ -20,7 +20,16 @@ from utils.train_util import (
 
 parser = argparse.ArgumentParser(description="Training Segmentation Model")
 parser.add_argument("--dataset", choices=["A2C", "A4C"])
-parser.add_argument("--encoder", choices=["se_resnext50_32x4d"])
+parser.add_argument(
+    "--encoder",
+    choices=[
+        "resnet18",  # 11M
+        "resnet34",  # 21M
+        "resnext50_32x4d",  # 22M
+        "se_resnext50_32x4d",  # 25M
+        "se_resnet50",  # 26M
+    ],
+)
 parser.add_argument("--num-workers", type=int)
 parser.add_argument("--batch-size", type=int)
 parser.add_argument("--lr", type=float)
