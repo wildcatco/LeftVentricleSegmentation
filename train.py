@@ -17,6 +17,7 @@ from utils.train_util import (
     get_validation_augmentation,
 )
 
+
 parser = argparse.ArgumentParser(description="Training Segmentation Model")
 parser.add_argument("--dataset", choices=["A2C", "A4C"])
 parser.add_argument("--encoder", choices=["se_resnext50_32x4d"])

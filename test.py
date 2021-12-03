@@ -13,6 +13,7 @@ from utils.train_util import (
     get_validation_augmentation,
 )
 
+
 parser = argparse.ArgumentParser(description="Testing Segmentation Model")
 parser.add_argument("checkpoint")
 
@@ -21,7 +22,7 @@ args = parser.parse_args()
 DATASET_DIR = "data/echocardiography"
 DEVICE = "cuda"
 
-best_model = torch.load(args.checkpoint)
+model = torch.load(args.checkpoint)
 
 dataset = args.checkpoint.split("/")[-1].split("_")[0]
 test_dataset = Dataset(
@@ -31,9 +32,6 @@ test_dataset = Dataset(
     augmentation=get_validation_augmentation(),
     preprocessing=get_preprocessing(),
 )
-
-test_dataloader = DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=4)
-
 test_dataset_flipped = Dataset(
     mode="validation",
     view=dataset,
@@ -48,13 +46,13 @@ for i in tqdm(range(len(test_dataset))):
     # normal test
     image, gt_mask = test_dataset[i]
     x_tensor = torch.from_numpy(image).to(DEVICE).unsqueeze(0)
-    pr_mask = best_model.predict(x_tensor)
+    pr_mask = model.predict(x_tensor)
     pr_mask = pr_mask.squeeze().unsqueeze(-1).cpu().numpy()
 
     # augmented test (flip)
     image_flipped, gt_mask_flipped = test_dataset_flipped[i]
     x_tensor_flipped = torch.from_numpy(image_flipped).to(DEVICE).unsqueeze(0)
-    pr_mask_flipped = best_model.predict(x_tensor_flipped)
+    pr_mask_flipped = model.predict(x_tensor_flipped)
     pr_mask_flipped = pr_mask_flipped.squeeze().unsqueeze(-1).cpu().numpy()
 
     pr_mask_tta = (pr_mask + np.flip(pr_mask_flipped, axis=1)) / 2
@@ -75,6 +73,6 @@ dice_tta = dice_total_tta / len(test_dataset)
 
 
 print("\nF-Score 성능")
-print(f"기존 성능 (only flip)\t:\t{dice}")
+print(f"기존 성능\t\t:\t{dice}")
 print(f"TTA 성능 (only flip)\t:\t{dice_tta}")
 print(f"성능 향상\t\t:\t{(dice_tta - dice)}")
