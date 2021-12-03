@@ -1,4 +1,4 @@
-## Instalation
+## Installation
 ubuntu18.04  
 conda create -n LVS python=3.8  
 conda activate LVS  
