@@ -40,8 +40,9 @@ test_dataset_flipped = Dataset(
     preprocessing=get_preprocessing(),
 )
 
-dice_total = 0
-dice_total_tta = 0
+dsc_total = 0
+dsc_total_tta = 0
+
 for i in tqdm(range(len(test_dataset))):
     # normal test
     image, gt_mask = test_dataset[i]
@@ -60,19 +61,22 @@ for i in tqdm(range(len(test_dataset))):
     gt_mask = gt_mask.squeeze(0)
 
     pr_mask = pr_mask.round()
-    dice = np.sum(pr_mask[gt_mask == 1]) * 2.0 / (np.sum(pr_mask) + np.sum(gt_mask))
-    dice_total += dice
-    dice_tta = (
+
+    # DSC (Dice Similarity Coefficient)
+    dsc = np.sum(pr_mask[gt_mask == 1]) * 2.0 / (np.sum(pr_mask) + np.sum(gt_mask))
+    dsc_total += dsc
+    dsc_tta = (
         np.sum(pr_mask_tta[gt_mask == 1])
         * 2.0
         / (np.sum(pr_mask_tta) + np.sum(gt_mask))
     )
-    dice_total_tta += dice_tta
-dice = dice_total / len(test_dataset)
-dice_tta = dice_total_tta / len(test_dataset)
+    dsc_total_tta += dsc_tta
 
+dsc = dsc_total / len(test_dataset)
+dsc_tta = dsc_total_tta / len(test_dataset)
 
-print("\nF-Score 성능")
-print(f"기존 성능\t\t:\t{dice}")
-print(f"TTA 성능 (only flip)\t:\t{dice_tta}")
-print(f"성능 향상\t\t:\t{(dice_tta - dice)}")
+ji = dsc / (2 - dsc)
+ji_tta = dsc_tta / (2 - dsc_tta)
+
+print(f"DSC\t:\t{dsc_tta}")
+print(f"JI\t:\t{ji_tta}")
