@@ -51,13 +51,15 @@ for i in tqdm(range(len(test_dataset))):
     # normal test
     _, gt_mask = test_dataset[i]
     gt[i] = gt_mask.transpose(1, 2, 0)
-dice_total = 0
+
+dsc_total = 0
 for i in range(gt.shape[0]):
     pr_mask = pred_ensemble[i]
     gt_mask = gt[i]
-    dice = np.sum(pr_mask[gt_mask == 1]) * 2.0 / (np.sum(pr_mask) + np.sum(gt_mask))
-    dice_total += dice
-dice = dice_total / gt.shape[0]
+    dsc = np.sum(pr_mask[gt_mask == 1]) * 2.0 / (np.sum(pr_mask) + np.sum(gt_mask))
+    dsc_total += dsc
+dsc = dsc_total / gt.shape[0]
+ji = dsc / (2 - dsc)
 
-print("\nF-Score 성능")
-print(f"앙상블 + TTA 성능\t:\t{dice}")
+print(f"DSC\t:\t{dsc}")
+print(f"JI\t:\t{ji}")
