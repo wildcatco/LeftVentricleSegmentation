@@ -1,5 +1,9 @@
-from segmentation_models_pytorch.utils.train import Epoch
+import random
+
 import albumentations as albu
+import numpy as np
+import torch
+from segmentation_models_pytorch.utils.train import Epoch
 
 
 class TrainEpoch(Epoch):
@@ -79,3 +83,11 @@ def to_tensor_mask(x, **kwargs):
 def get_preprocessing():
     _transform = [albu.Lambda(image=to_tensor_img, mask=to_tensor_mask)]
     return albu.Compose(_transform)
+
+
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)

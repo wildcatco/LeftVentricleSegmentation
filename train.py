@@ -15,6 +15,7 @@ from utils.train_util import (
     get_preprocessing,
     get_training_augmentation,
     get_validation_augmentation,
+    set_seed,
 )
 
 
@@ -35,6 +36,7 @@ parser.add_argument("--batch-size", type=int)
 parser.add_argument("--lr", type=float)
 parser.add_argument("--wd", type=float)
 parser.add_argument("--max-epochs", type=int)
+parser.add_argument("--seed", type=int)
 
 args = parser.parse_args()
 
@@ -43,6 +45,8 @@ os.makedirs("results/checkpoints", exist_ok=True)
 
 DATASET_DIR = "data/echocardiography"
 DEVICE = "cuda"
+
+set_seed(args.seed)
 
 model = smp.DeepLabV3Plus(
     encoder_name=args.encoder,
@@ -138,6 +142,8 @@ model_name = "_".join(
         str(args.wd),
         "epochs",
         str(args.max_epochs),
+        "seed",
+        str(args.seed),
     ]
 )
 
