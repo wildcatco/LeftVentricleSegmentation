@@ -1,0 +1,1 @@
+python test_ensemble.py results/checkpoints/A4C/* --mode test

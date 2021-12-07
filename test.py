@@ -16,6 +16,7 @@ from utils.train_util import (
 
 parser = argparse.ArgumentParser(description="Testing Segmentation Model")
 parser.add_argument("checkpoint")
+parser.add_argument("mode", choices=["validation", "test"])
 
 args = parser.parse_args()
 
@@ -26,14 +27,14 @@ model = torch.load(args.checkpoint)
 
 dataset = args.checkpoint.split("/")[-1].split("_")[0]
 test_dataset = Dataset(
-    mode="validation",
+    mode=args.mode,
     view=dataset,
     data_dir=DATASET_DIR,
     augmentation=get_validation_augmentation(),
     preprocessing=get_preprocessing(),
 )
 test_dataset_flipped = Dataset(
-    mode="validation",
+    mode=args.mode,
     view=dataset,
     data_dir=DATASET_DIR,
     augmentation=get_tta_augmentation(),

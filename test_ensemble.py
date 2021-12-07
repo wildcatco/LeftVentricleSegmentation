@@ -14,6 +14,7 @@ from utils.train_util import (
 
 parser = argparse.ArgumentParser(description="Testing Segmentation Model")
 parser.add_argument("checkpoints", nargs="+")
+parser.add_argument("mode", default="validation", choices=["validation", "test"])
 
 args = parser.parse_args()
 
@@ -28,14 +29,14 @@ for i in range(len(args.checkpoints)):
 
 dataset = args.checkpoints[0].split("/")[-1].split("_")[0]
 test_dataset = Dataset(
-    mode="validation",
+    mode=args.dataset,
     view=dataset,
     data_dir=DATASET_DIR,
     augmentation=get_validation_augmentation(),
     preprocessing=get_preprocessing(),
 )
 test_dataset_flipped = Dataset(
-    mode="validation",
+    mode=args.dataset,
     view=dataset,
     data_dir=DATASET_DIR,
     augmentation=get_tta_augmentation(),
